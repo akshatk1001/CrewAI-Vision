@@ -1,0 +1,22 @@
+info_extractor_task:
+  description: >
+    Analyze the image at path: {image_path} using the ollama_vision_tool.
+    
+    STEP 1: Use the tool to determine if this is a diagram, flowchart, or organizational chart.
+    STEP 2: If it's NOT a diagram, state clearly that it cannot be converted to mermaid and describe what it actually is.
+    STEP 3: If it IS a diagram, use the tool additional times to gather structural information.
+    STEP 4: Output mermaid syntax that can be used to recreate the diagram programmatically.
+    
+    Keep your analysis focused and complete the task efficiently.
+  expected_output: >
+    Either:
+      1. A clear statement that the image is not suitable for mermaid conversion with explanation of content type, OR
+      2. A structured analysis of the diagram containing:
+        - Node identification: List all nodes/entities with their labels and types
+        - Connection mapping: Describe all connections between nodes with direction and relationship types
+        - Hierarchy levels: Identify any hierarchical structures or groupings
+        - Flow direction: Specify the overall flow direction (top-down, left-right, etc.)
+        - Special elements: Note any decision points, start/end nodes, or special symbols
+        - Suggested mermaid syntax: Recommend appropriate mermaid diagram type (flowchart, graph, etc.)
+      Format as structured text that can be easily converted to mermaid code.
+  agent: image_information_extracter
