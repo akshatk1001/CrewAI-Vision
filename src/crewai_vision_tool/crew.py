@@ -34,9 +34,32 @@ class CrewaiVisionTool():
         return Agent(
             config=self.agents_config['image_information_extracter'], # type: ignore[index]
             verbose=True,
-            tools=[OllamaLLavaTool()],  # This tool uses Ollama LLaVA directly
             llm=llm,
+            tools=[OllamaLLavaTool()]
         )
+
+    @agent
+    def mermaid_diagram_creator(self) -> Agent:
+        return Agent(
+            config=self.agents_config['mermaid_diagram_creator'], # type: ignore[index]
+            verbose=True,
+            llm=LLM(
+                model="ollama/codellama:latest",
+                api_base="http://localhost:11434"
+            )
+        )
+    
+    @agent
+    def mermaid_diagram_verifier(self) -> Agent:
+        return Agent(
+            config=self.agents_config['mermaid_diagram_verifier'], # type: ignore[index]
+            verbose=True,
+            llm=LLM(
+                model="ollama/qwen3:latest",
+                api_base="http://localhost:11434"
+            )
+        )
+
 
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
@@ -46,6 +69,20 @@ class CrewaiVisionTool():
         return Task(
             config=self.tasks_config['info_extractor_task'], # type: ignore[index]
             output_file = "analyzed.txt"
+        )
+
+    @task
+    def mermaid_code_creator_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['mermaid_code_creator_task'], # type: ignore[index]
+            output_file = "diagram.mmd"
+        )
+    
+    @task
+    def mermaid_code_verifier_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['mermaid_code_verifier_task'], # type: ignore[index]
+            output_file = "verification.txt"
         )
 
     @crew

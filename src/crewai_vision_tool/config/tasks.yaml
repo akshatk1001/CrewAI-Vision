@@ -1,22 +1,150 @@
 info_extractor_task:
   description: >
-    Analyze the image at path: {image_path} using the ollama_vision_tool.
+    Perform an EXHAUSTIVE multi-pass analysis of the diagram at {image_path} using the ollama_vision_tool. 
+    You MUST use the vision tool AT LEAST 6 times with highly specific, targeted prompts designed to 
+    capture every visual element in the diagram. Each tool call should focus on a different aspect:
     
-    STEP 1: Use the tool to determine if this is a diagram, flowchart, or organizational chart.
-    STEP 2: If it's NOT a diagram, state clearly that it cannot be converted to mermaid and describe what it actually is.
-    STEP 3: If it IS a diagram, use the tool additional times to gather structural information.
-    STEP 4: Output mermaid syntax that can be used to recreate the diagram programmatically.
+    PASS 1: Text Extraction - "List ALL text visible in this image, including URLs, domain names, 
+    component labels, service names, and any annotations. Be extremely thorough."
     
-    Keep your analysis focused and complete the task efficiently.
+    PASS 2: Component Inventory - "Identify and describe EVERY shape, icon, box, circle, and visual 
+    component in this diagram. Include colors, sizes, and positions."
+    
+    PASS 3: Boundary Analysis - "Identify ALL containers, groupings, zones, borders, and organizational 
+    structures. Note dashed lines, solid lines, colored boundaries, and what they contain."
+    
+    PASS 4: Connection Mapping - "Trace EVERY line, arrow, connection, and flow in the diagram. 
+    Describe what connects to what, including direction and line styles."
+    
+    PASS 5: Spatial Layout - "Describe the overall layout, positioning, and hierarchical arrangement 
+    of all elements. Note what's inside what, what's adjacent to what."
+    
+    PASS 6: Verification Sweep - "Perform a final comprehensive scan to ensure nothing was missed. 
+    Look for any small details, annotations, or elements not yet captured."
+    
+    Your analysis must be so detailed that someone could recreate the exact diagram without seeing it.
   expected_output: >
-    Either:
-      1. A clear statement that the image is not suitable for mermaid conversion with explanation of content type, OR
-      2. A structured analysis of the diagram containing:
-        - Node identification: List all nodes/entities with their labels and types
-        - Connection mapping: Describe all connections between nodes with direction and relationship types
-        - Hierarchy levels: Identify any hierarchical structures or groupings
-        - Flow direction: Specify the overall flow direction (top-down, left-right, etc.)
-        - Special elements: Note any decision points, start/end nodes, or special symbols
-        - Suggested mermaid syntax: Recommend appropriate mermaid diagram type (flowchart, graph, etc.)
-      Format as structured text that can be easily converted to mermaid code.
+    CRITICAL: You MUST complete all 6 vision tool passes before providing your final output.
+    
+    Provide an EXHAUSTIVE analysis structured as follows:
+    
+    ## TEXT ELEMENTS DETECTED:
+    List every piece of text, including:
+    - URLs and domain names (like www.example.com, media.example.com)
+    - Service names and component labels  
+    - Titles and annotations
+    - Any numbers, codes, or identifiers
+    
+    ## VISUAL COMPONENTS INVENTORY:
+    Catalog every visual element:
+    - Shapes (rectangles, circles, cylinders, etc.) with colors and sizes
+    - Icons and symbols
+    - AWS service representations
+    - Any graphical elements
+    
+    ## ORGANIZATIONAL STRUCTURES:
+    Document all groupings and containers:
+    - Availability zones and their boundaries
+    - Security groups and their contents
+    - VPCs and networking containers
+    - Any nested structures
+    
+    ## CONNECTIONS AND FLOWS:
+    Map every connection:
+    - Source and destination of each arrow/line
+    - Connection types (solid, dashed, colored)
+    - Data flow directions
+    - Relationship types
+    
+    ## SPATIAL RELATIONSHIPS:
+    Describe the layout:
+    - What elements are positioned where
+    - Hierarchical arrangements
+    - Inside/outside relationships
+    - Proximity and alignment
+    
+    Your analysis should be 500+ words of comprehensive detail covering every visible element.
   agent: image_information_extracter
+
+mermaid_code_creator_task: 
+  description: >
+    Transform the exhaustive analysis into comprehensive Mermaid code that recreates EVERY element 
+    described. Your code must include:
+    
+    - Every component mentioned in the analysis as appropriately styled nodes
+    - All groupings and containers as subgraphs with correct labels
+    - Every connection and relationship with proper arrow types
+    - Accurate spatial organization matching the original layout
+    - All text labels exactly as they appear in the analysis
+    
+    Use advanced Mermaid features including:
+    - Subgraphs for organizational boundaries (Availability Zones, Security Groups)
+    - Multiple node styles for different component types
+    - Proper connection types (arrows, lines, flows)
+    - Node labeling that matches the original text exactly
+
+    Does not infer any missing elements or make assumptions. Only uses the information
+    provided in the analysis. Your goal is to create a Mermaid diagram that is visually identical
+    to the detailed analysis, even if it does not make sense or is overly complex.
+  expected_output: >
+    Comprehensive Mermaid flowchart code that includes:
+    
+    ```mermaid
+    flowchart TB
+        %% All components with exact labels from analysis
+        %% All subgraphs for organizational structures  
+        %% All connections mapped from the analysis
+        %% Proper node styling for visual accuracy
+    ```
+    
+    Your Mermaid code must be complex enough to represent every element from the analysis. 
+    Include comments explaining the mapping from analysis to code structure.
+    DO NOT provide any additional text - only the Mermaid code block.
+  agent: mermaid_diagram_creator
+  context:
+    - info_extractor_task
+
+mermaid_code_verifier_task:
+  description: >
+    Perform a forensic validation of the Mermaid code against the exhaustive analysis. 
+    Create a detailed verification report that checks:
+    
+    1. Component Completeness: Verify every component from the analysis appears in the code
+    2. Text Accuracy: Confirm all labels match exactly (URLs, service names, etc.)
+    3. Structural Fidelity: Ensure all groupings and containers are properly represented
+    4. Connection Accuracy: Validate all relationships and flows are captured
+    5. Layout Preservation: Check that spatial relationships are maintained
+    
+    Your validation must be uncompromising - flag ANY missing or misrepresented elements.
+  expected_output: >
+    Detailed validation report structured as:
+    
+    ## VALIDATION SUMMARY
+    [Pass/Fail status with overall assessment]
+    
+    ## COMPONENT VERIFICATION
+    ✅ Verified components: [list]
+    ❌ Missing components: [list any missing]
+    ⚠️ Misrepresented components: [list any issues]
+    
+    ## TEXT ACCURACY CHECK  
+    ✅ Correct labels: [list]
+    ❌ Missing text: [list any missing]
+    ⚠️ Incorrect text: [list any errors]
+    
+    ## STRUCTURAL VALIDATION
+    ✅ Properly represented structures: [list]
+    ❌ Missing organizational elements: [list any missing]
+    
+    ## CONNECTION VERIFICATION
+    ✅ Correctly mapped connections: [list]
+    ❌ Missing relationships: [list any missing]
+    
+    ## RECOMMENDATIONS
+    [Specific changes needed to achieve 100% accuracy]
+    
+    If the code is not 100% accurate, provide specific corrections needed.
+  agent: mermaid_diagram_verifier
+  context:
+    - mermaid_code_creator_task
+    - info_extractor_task
