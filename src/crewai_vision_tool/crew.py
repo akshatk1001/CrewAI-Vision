@@ -26,9 +26,9 @@ class CrewaiVisionTool():
     # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
     def image_information_extracter(self) -> Agent:
-        # Now using the patched Ollama configuration
+        # Now using the latest vision model for better image understanding
         llm = LLM(
-            model="ollama/llama3:latest",
+            model="ollama/llama3.2-vision:latest",
             api_base="http://localhost:11434"
         )
         return Agent(
@@ -55,7 +55,7 @@ class CrewaiVisionTool():
             config=self.agents_config['mermaid_diagram_verifier'], # type: ignore[index]
             verbose=True,
             llm=LLM(
-                model="ollama/qwen3:latest",
+                model="ollama/llama3.2-vision:latest",
                 api_base="http://localhost:11434"
             )
         )
@@ -95,7 +95,11 @@ class CrewaiVisionTool():
             agents=self.agents, # Automatically created by the @agent decorator
             tasks=self.tasks, # Automatically created by the @task decorator
             process=Process.sequential,
-            planning=False,  # Disable planning to avoid OpenAI dependency (since I don't have any tokens left)
             verbose=True,
+            # planning = True,
+            # planning_llm= LLM(
+            #     model="ollama/llama3:latest",
+            #     api_base="http://localhost:11434"
+            # ),
             # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
         )
