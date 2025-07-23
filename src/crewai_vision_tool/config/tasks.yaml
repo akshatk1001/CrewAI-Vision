@@ -2,29 +2,16 @@ info_extractor_task:
   description: >
     Perform an EXHAUSTIVE multi-pass analysis of the diagram at {image_path} using the ollama_vision_tool. 
     You MUST use the vision tool AT LEAST 6 times with highly specific, targeted prompts designed to 
-    capture every visual element in the diagram. Each tool call should focus on a different aspect:
+    capture every visual element in the diagram. Each tool call should focus on a different aspect.
     
-    PASS 1: Text Extraction - "List ALL text visible in this image, including URLs, domain names, 
-    component labels, service names, and any annotations. Be extremely thorough."
-    
-    PASS 2: Component Inventory - "Identify and describe EVERY shape, icon, box, circle, and visual 
-    component in this diagram. Include colors, sizes, and positions."
-    
-    PASS 3: Boundary Analysis - "Identify ALL containers, groupings, zones, borders, and organizational 
-    structures. Note dashed lines, solid lines, colored boundaries, and what they contain."
-    
-    PASS 4: Connection Mapping - "Trace EVERY line, arrow, connection, and flow in the diagram. 
-    Describe what connects to what, including direction and line styles."
-    
-    PASS 5: Spatial Layout - "Describe the overall layout, positioning, and hierarchical arrangement 
-    of all elements. Note what's inside what, what's adjacent to what."
-    
-    PASS 6: Verification Sweep - "Perform a final comprehensive scan to ensure nothing was missed. 
-    Look for any small details, annotations, or elements not yet captured."
+    When calling the vision tool:
+    1. Use unique prompts for each call - DO NOT reuse the exact same prompt
+    2. If a tool call fails, try a different prompt approach
+    3. Include the image_path and a specific prompt in each call
     
     Your analysis must be so detailed that someone could recreate the exact diagram without seeing it.
   expected_output: >
-    CRITICAL: You MUST complete all 6 vision tool passes before providing your final output.
+    CRITICAL: You MUST complete at least 6 vision tool passes before providing your final output.
     
     Provide an EXHAUSTIVE analysis structured as follows:
     
@@ -77,7 +64,7 @@ mermaid_code_creator_task:
     - Accurate spatial organization matching the original layout
     - All text labels exactly as they appear in the analysis
     
-    Use advanced Mermaid features including:
+    Use Mermaid features including:
     - Subgraphs for organizational boundaries (Availability Zones, Security Groups)
     - Multiple node styles for different component types
     - Proper connection types (arrows, lines, flows)
@@ -100,6 +87,7 @@ mermaid_code_creator_task:
     Your Mermaid code must be complex enough to represent every element from the analysis. 
     Include comments explaining the mapping from analysis to code structure.
     DO NOT provide any additional text - only the Mermaid code block.
+    The code must be syntactically correct and ready to be copy-pasted in Mermaid.js.
   agent: mermaid_diagram_creator
   context:
     - info_extractor_task
