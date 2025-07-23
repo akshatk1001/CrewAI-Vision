@@ -31,7 +31,7 @@ class OllamaLLavaTool(BaseTool):
         # Use LiteLLM to call Ollama's LLaVA model
         # https://docs.litellm.ai/docs/providers/ollama#ollama-vision-models
         response = litellm.completion(
-            model="ollama/llava:latest",
+            model="ollama/llama3.2-vision:latest",
             messages=[
                 {
                     "role": "user",
