@@ -1,62 +1,31 @@
 info_extractor_task:
   description: >
     Perform an EXHAUSTIVE multi-pass analysis of the diagram at {image_path} using the ollama_vision_tool. 
-    You MUST use the vision tool AT LEAST 6 times with highly specific, targeted prompts designed to 
-    capture every visual element in the diagram. Each tool call should focus on a different aspect.
+    You MUST use the vision tool with highly specific, targeted prompts designed to 
+    capture every visual element in the diagram.
     
-    When calling the vision tool:
-    1. Use unique prompts for each call - DO NOT reuse the exact same prompt
-    2. If a tool call fails, try a different prompt approach
-    3. Include the image_path and a specific prompt in each call
+    When calling the vision tool use unique prompts for each call - DO NOT reuse the exact same prompt
     
-    Your analysis must be so detailed that someone could recreate the exact diagram without seeing it.
+    Your analysis must be so detailed that someone could recreate the exact diagram without ever
+    seeing the diagram. It should contain enough information for another AI agent to just read your
+    description 
   expected_output: >
-    CRITICAL: You MUST complete at least 6 vision tool passes before providing your final output.
-    
-    Provide an EXHAUSTIVE analysis structured as follows:
-    
-    ## TEXT ELEMENTS DETECTED:
-    List every piece of text, including:
-    - URLs and domain names (like www.example.com, media.example.com)
-    - Service names and component labels  
-    - Titles and annotations
-    - Any numbers, codes, or identifiers
-    
-    ## VISUAL COMPONENTS INVENTORY:
-    Catalog every visual element:
-    - Shapes (rectangles, circles, cylinders, etc.) with colors and sizes
-    - Icons and symbols
-    - AWS service representations
-    - Any graphical elements
-    
-    ## ORGANIZATIONAL STRUCTURES:
-    Document all groupings and containers:
-    - Availability zones and their boundaries
-    - Security groups and their contents
-    - VPCs and networking containers
-    - Any nested structures
-    
-    ## CONNECTIONS AND FLOWS:
-    Map every connection:
-    - Source and destination of each arrow/line
-    - Connection types (solid, dashed, colored)
-    - Data flow directions
-    - Relationship types
-    
-    ## SPATIAL RELATIONSHIPS:
-    Describe the layout:
-    - What elements are positioned where
-    - Hierarchical arrangements
-    - Inside/outside relationships
-    - Proximity and alignment
+    A text file containing an EXHAUSTIVE analysis containing everything that another
+    agentic AI model can use to create a mermaid diagram representing the 
+    diagram you've analyzed exactly. mention every singler piece of information, 
+    irregardless of its relevancy. Include all text, visual components, the way the components
+    are connected, organizational structures such as groupings and containers,
+    all connections/relationships, and the spatial relationships between components. 
     
     Your analysis should be 500+ words of comprehensive detail covering every visible element.
+    It should be multiple paragraphs long and well structured so that a mermaid diagram representing
+    the image can be recreated based solely off your analysis.
   agent: image_information_extracter
 
 mermaid_code_creator_task: 
   description: >
-    Transform the exhaustive analysis into comprehensive Mermaid code that recreates EVERY element 
-    described. Your code must include:
+    You are a Mermaid code generator for complex cloud architecture diagrams. Transform the exhaustive 
+    analysis into comprehensive Mermaid code that recreates EVERY element described.
     
     - Every component mentioned in the analysis as appropriately styled nodes
     - All groupings and containers as subgraphs with correct labels
@@ -74,29 +43,57 @@ mermaid_code_creator_task:
     provided in the analysis. Your goal is to create a Mermaid diagram that is visually identical
     to the detailed analysis, even if it does not make sense or is overly complex.
   expected_output: >
-    Comprehensive Mermaid flowchart code that includes:
+    A comprehensive Mermaid code block with subgraphs, multiple node types, and complex connections
+    that accurately represents the cloud architecture from the analysis. Must start with ```mermaid
+    and end with ```. NO additional text.
     
     ```mermaid
     flowchart TB
-        %% All components with exact labels from analysis
-        %% All subgraphs for organizational structures  
-        %% All connections mapped from the analysis
-        %% Proper node styling for visual accuracy
+        subgraph VPC["VPC"]
+            subgraph AZ1["Availability Zone 1"]
+                subgraph SG1["Security Group"]
+                    ELB1[Elastic Load Balancer]
+                    EC2_1[EC2 Instance]
+                end
+                subgraph SG2["Auto Scaling Group"]
+                    EC2_2[EC2 Instance]
+                    EC2_3[EC2 Instance]
+                end
+            end
+            subgraph AZ2["Availability Zone 2"]
+                RDS[(RDS Database)]
+                S3[/S3 Bucket/]
+            end
+        end
+        
+        Internet((Internet)) --> ELB1
+        ELB1 --> EC2_1
+        ELB1 --> EC2_2
+        EC2_1 --> RDS
+        EC2_2 --> S3
     ```
     
-    Your Mermaid code must be complex enough to represent every element from the analysis. 
-    Include comments explaining the mapping from analysis to code structure.
-    DO NOT provide any additional text - only the Mermaid code block.
-    The code must be syntactically correct and ready to be copy-pasted in Mermaid.js.
+    RULES:
+    1. Start with: ```mermaid
+    2. Begin diagram with: flowchart TB (or LR for horizontal layout)
+    3. Use subgraphs for ALL containers/groupings mentioned in analysis
+    4. Use appropriate node shapes for different component types
+    5. Include ALL connections and relationships
+    6. Add proper labels matching the analysis exactly
+    7. End with: ```
+    8. NO explanatory text outside the code block
+    
+    Generate comprehensive Mermaid code for the complex architecture described in the analysis.
   agent: mermaid_diagram_creator
   context:
     - info_extractor_task
 
 mermaid_code_verifier_task:
   description: >
-    Perform a forensic validation of the Mermaid code against the exhaustive analysis. 
-    Create a detailed verification report that checks:
+    Use the ollama_vision_tool to examine the original image at {image_path} and perform 
+    a forensic validation of the generated Mermaid code.
     
+    Create a detailed verification report that checks:
     1. Component Completeness: Verify every component from the analysis appears in the code
     2. Text Accuracy: Confirm all labels match exactly (URLs, service names, etc.)
     3. Structural Fidelity: Ensure all groupings and containers are properly represented
@@ -108,7 +105,6 @@ mermaid_code_verifier_task:
     Detailed validation report structured as:
     
     ## VALIDATION SUMMARY
-    [Pass/Fail status with overall assessment]
     
     ## COMPONENT VERIFICATION
     ✅ Verified components: [list]
