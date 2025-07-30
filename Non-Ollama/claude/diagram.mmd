@@ -1,24 +1,33 @@
 ```mermaid
 graph LR
-    subgraph AvailabilityZone["Availability Zone"]
-        subgraph AutoScalingGroup["Auto Scaling Group"]
-            SecurityGroup["Security Group"]
-            RootVolume[("Root Volume")]
-            DataVolume[("Data Volume")]
+    subgraph AZ["Availability Zone"]
+        subgraph ASG["Auto Scaling Group"]
+            SG["Security Group"]
+            RV[("Root Volume")]
+            DV[("Data Volume")]
         end
-        SecurityGroupLower[(security group)]
+        MSG[("security group")]
     end
-
-    WWW((www.example.com))
+    
+    WWW["www.example.com"]
     ELB((Elastic Load Balancing))
-    MEDIA>media.example.com]
-    EBSSnapshot[(Amazon EB S Snapshot)]
-    S3[("Amazon S3 Bucket")]
-
+    EBSS[(Amazon EB S Snapshot)]
+    S3[(Amazon S3 Bucket)]
+    CFD((Cloud Front Distribution))
+    MEDIA["media.example.com"]
+    
     WWW --> ELB
-    ELB --> AutoScalingGroup
-    AutoScalingGroup --> |Logs| S3
-    DataVolume --> EBSSnapshot
-    EBSSnapshot --> S3
-    MEDIA --> |CloudFront Distribution| S3
+    ELB --> AZ
+    DV --> EBSS
+    EBSS --> S3
+    AZ -- Logs --> S3
+    S3 --> MEDIA
+    CFD -.-> MEDIA
+    
+    classDef default fill:#fff,stroke:#333,stroke-width:2px;
+    classDef az stroke-dasharray: 5 5;
+    classDef asg stroke-dasharray: 5 5;
+    
+    class AZ az;
+    class ASG asg;
 ```

@@ -2,6 +2,9 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
+import streamlit as st
+import json
+from langchain_core.agents import AgentFinish
 from afvision.tools.custom_tool import ImageTool  # Assuming custom_tool.py is in the same directory
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -16,6 +19,34 @@ class Afvision():
     agents: List[BaseAgent]
     tasks: List[Task]
 
+    def step_callback_crewai(self, agent_output, agent_name, *args):
+        with st.chat_message("AI"):
+            if isinstance(agent_output, str):
+                try:
+                    agent_output = json.loads(agent_output)
+                except json.JSONDecodeError:
+                    pass
+            
+            if isinstance(agent_output, list) and all(isinstance(item, tuple) for item in agent_output):
+                for action, desc in agent_output:
+                    st.write(f"Agent Name: {agent_name}")
+                    st.write(f"Tool used (if any): {getattr(action, 'tool', 'N/A')}")
+                    st.write(f"Tool input:  {getattr(action, 'tool_input', 'N/A')}")
+                    st.write(f"{getattr(action, 'log', 'Unknown')}")
+                    with st.expander("Show observation"):
+                        st.markdown(f"Observation\n\n{desc}")
+            
+            elif isinstance(agent_output, AgentFinish):
+                st.write(f"Agent Name: {agent_name}")
+                st.write(f"I've finished my task:\n {agent_output.return_values['output']}")
+            
+            else:
+                st.write(f"Agent Name: {agent_name}")
+                st.write(type(agent_output))
+                st.write(f"Output: {agent_output}")
+
+
+
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
@@ -26,12 +57,15 @@ class Afvision():
     def diagram_info_extractor(self) -> Agent:
         return Agent(
             config=self.agents_config['diagram_info_extractor'], # type: ignore[index]
+            max_iter=3,
+            step_callback = lambda step: self.step_callback_crewai(step, "Info Extractor Agent"),
         )
 
     @agent
     def mermaid_code_generator(self) -> Agent:
         return Agent(
             config=self.agents_config['mermaid_code_generator'], # type: ignore[index]
+            step_callback = lambda step: self.step_callback_crewai(step, "Mermaid Code Generator Agent")
         )
 
     # To learn more about structured task outputs,

@@ -1,56 +1,64 @@
 AWS Diagram Example
 
-This cloud architecture diagram illustrates an AWS (Amazon Web Services) setup. The diagram uses a color scheme of primarily orange, red, and blue on a white background. Here's a detailed description of all elements:
+This detailed description captures all elements of the cloud architecture diagram, enabling its recreation:
 
-1. Title: "AWS Diagram Example" is prominently displayed at the top of the image.
+1. Title and Overall Layout:
+   - The diagram is titled "AWS Diagram Example" at the top center.
+   - Components are arranged in a left-to-right flow, representing data and service interactions.
+   - The layout is symmetrical, with main components aligned horizontally in the center.
 
-2. External Components:
-   - Left side: An orange cross-shaped icon labeled "www.example.com"
-   - Right side: A red circular icon with a downward arrow, labeled "media.example.com"
+2. External Connections:
+   - Top left: "www.example.com" (orange cross-like icon)
+   - Top right: "media.example.com" (text only)
 
-3. Elastic Load Balancing:
-   - Represented by an orange circular icon with multiple arrows pointing inward and outward
-   - Located to the left of the main architecture
-   - Connected to www.example.com and the internal components
+3. Main Components (left to right):
+   a. Elastic Load Balancing:
+      - Orange circular icon with arrows
+      - Connected to www.example.com via a downward arrow
+      - Connects to the Availability Zone via a rightward arrow
 
-4. Main Architecture:
-   - Enclosed in a large orange dashed rectangle labeled "Availability Zone" at the bottom
+   b. Availability Zone:
+      - Large orange dashed rectangle encompassing most components
+      - Label "Availability Zone" at the bottom of the rectangle
 
-5. Auto Scaling Group:
-   - Inside the Availability Zone, there's a pink dashed rectangle labeled "Auto Scaling Group"
-   - Contains a "Security Group" (orange rectangle) and two volumes
+   c. Auto Scaling Group:
+      - Pink dashed rectangle inside the Availability Zone
+      - Label "Auto Scaling Group" at the top of the rectangle
+      - Contains:
+        - "Security Group" (text label with orange rectangle inside)
+        - "Root Volume" (red cylinder icon)
+        - "Data Volume" (red cylinder icon)
 
-6. Security Group:
-   - Represented by an orange rectangle within the Auto Scaling Group
+   d. Additional Security Group:
+      - Blue square icon with "M" inside
+      - Labeled "security group"
+      - Located at the bottom of the Availability Zone in a dashed rectangle
 
-7. Volumes:
-   - Two red cylinder-shaped icons labeled "Root Volume" and "Data Volume"
-   - Located to the right of the Security Group within the Auto Scaling Group
+   e. Amazon EB S Snapshot:
+      - Red bucket-like icon
+      - Connected to Data Volume via a rightward arrow
 
-8. Additional Security Group:
-   - Below the Auto Scaling Group, there's a blue cylinder icon with "M" inside
-   - Labeled "security group" (lowercase) and enclosed in a red dashed rectangle
+   f. Amazon S3 Bucket:
+      - Larger red bucket-like icon
+      - Receives "Logs" from Availability Zone via a rightward arrow
+      - Connected to Amazon EB S Snapshot via a rightward arrow
+      - Connects to media.example.com via an upward arrow
 
-9. Amazon EBS Snapshot:
-   - Represented by a small red icon shaped like a bucket
-   - Located to the right of the Availability Zone
-   - Connected to the Data Volume
-   - Labeled "Amazon EB S Snapshot" (with a space in "EBS")
+   g. Cloud Front Distribution:
+      - Red circular icon with dotted downward arrow symbol
+      - Located near media.example.com
 
-10. Amazon S3 Bucket:
-    - Large red bucket-shaped icon on the far right
-    - Labeled "Amazon S3 Bucket"
-    - Connected to the EBS Snapshot and receiving "Logs" directly from the Auto Scaling Group
+4. Connections and Data Flow:
+   - www.example.com → Elastic Load Balancing → Availability Zone
+   - Data Volume → Amazon EB S Snapshot → Amazon S3 Bucket
+   - Availability Zone ("Logs") → Amazon S3 Bucket
+   - Amazon S3 Bucket → media.example.com
+   - Cloud Front Distribution (implied connection to media.example.com)
 
-11. CloudFront Distribution:
-    - Text running vertically along the right side of the diagram
-    - Connects media.example.com to the Amazon S3 Bucket
-    - Contains a dotted downward arrow symbol inside the icon
+5. Color Scheme:
+   - Orange: User-facing components (www.example.com, Elastic Load Balancing)
+   - Red: AWS services (volumes, Amazon EB S Snapshot, Amazon S3 Bucket, Cloud Front Distribution)
+   - Blue: Additional security group icon
+   - Pink: Auto Scaling Group boundary
 
-12. Connections:
-    - Black arrows show the flow of data between components
-    - A "Logs" arrow directly connects the Auto Scaling Group to the S3 Bucket
-
-The diagram effectively illustrates the flow of data and the relationships between different AWS services and components in a cloud architecture setup. It shows how external requests from www.example.com are routed through Elastic Load Balancing to an Auto Scaling Group within an Availability Zone. The Auto Scaling Group contains a Security Group and manages Root and Data Volumes. The Data Volume is connected to an Amazon EBS Snapshot, which in turn connects to an Amazon S3 Bucket. The S3 Bucket also receives logs directly from the Auto Scaling Group. On the right side, media.example.com connects to the S3 Bucket via a CloudFront Distribution, likely for content delivery. An additional security group is depicted below the main Auto Scaling Group, possibly for extra security measures or management purposes.
-
-This detailed description captures all visible elements of the AWS Diagram Example, providing enough information to recreate the diagram accurately.
+This description provides a comprehensive overview of all elements in the AWS architecture diagram, including components, connections, labels, and layout, allowing for accurate recreation without relying on the original image.
