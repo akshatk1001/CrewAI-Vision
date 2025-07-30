@@ -1,0 +1,11 @@
+extraction_task:
+  description: >
+    Write a EXHAUSTIVE detailed description of the cloud architecture diagram at
+    {image_path}. You must capture every single element in the diagram, such as 
+    text, containers, boundaries, and most importantly each arrow and connection
+    between items. The final output should be so detailed that the diagram can
+    be recreated just based off your description. 
+  expected_output: >
+    output what the image is describing in a txt file. 
+  agent: diagram_info_extractor
+  output_file: analyzed.txt

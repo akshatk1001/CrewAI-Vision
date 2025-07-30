@@ -1,0 +1,50 @@
+Azure Architecture Diagram
+
+The diagram depicts an Azure cloud architecture with the following components and structure:
+
+1. Title:
+   "Azure Architecture Diagram" in a light gray box with diagonal striped background at the top.
+
+2. Main Components (left to right):
+
+   a. Traffic Manager Profiles:
+      - Purple octagonal icon with arrows pointing in different directions
+
+   b. Application Load Balancers (ALB):
+      - Three green diamond-shaped icons with arrows pointing outwards
+      - Positioned between major tiers of the architecture
+
+   c. Web Tier:
+      - Box containing three identical VM (Virtual Machine) icons
+      - Each VM represented by a computer monitor with a blue cube inside
+      - Labeled "VM" underneath each icon
+
+   d. Business Tier:
+      - Similar to Web Tier, contains three VM icons labeled "VM"
+
+   e. SQL Server Database On:
+      - Contains two SQL database icons
+      - Each database represented by a blue cylinder with "SQL" text and a small gear icon
+
+3. Connections:
+   - Gray arrows connect components from left to right
+   - Traffic Manager connects to the first ALB
+   - First ALB connects to all three VMs in Web Tier
+   - Web Tier connects to second ALB
+   - Second ALB connects to all three VMs in Business Tier
+   - Business Tier connects to third ALB
+   - Third ALB connects to both SQL databases
+
+4. Management Subnet:
+   - Located at the bottom of the diagram
+   - Contains two icons:
+     a. Jumpbox: Computer monitor with a blue cube inside
+     b. Active Directory: Light blue icon with three connected dots
+
+5. Visual Style:
+   - White background with minimalist design
+   - Components grouped in rectangular boxes with labels at the top
+   - Color scheme: Purple (Traffic Manager), Green (ALBs), Light Blue (VMs), Dark Blue (SQL databases)
+   - Management Subnet separated from main flow
+
+This diagram illustrates a multi-tiered Azure application architecture with load balancing, separated web and business logic tiers, a database backend, and management components for administration and security.
