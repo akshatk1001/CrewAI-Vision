@@ -1,0 +1,24 @@
+```mermaid
+graph LR
+    subgraph AvailabilityZone["Availability Zone"]
+        subgraph AutoScalingGroup["Auto Scaling Group"]
+            SecurityGroup["Security Group"]
+            RootVolume[("Root Volume")]
+            DataVolume[("Data Volume")]
+        end
+        SecurityGroupLower[(security group)]
+    end
+
+    WWW((www.example.com))
+    ELB((Elastic Load Balancing))
+    MEDIA>media.example.com]
+    EBSSnapshot[(Amazon EB S Snapshot)]
+    S3[("Amazon S3 Bucket")]
+
+    WWW --> ELB
+    ELB --> AutoScalingGroup
+    AutoScalingGroup --> |Logs| S3
+    DataVolume --> EBSSnapshot
+    EBSSnapshot --> S3
+    MEDIA --> |CloudFront Distribution| S3
+```

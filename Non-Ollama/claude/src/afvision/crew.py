@@ -28,6 +28,12 @@ class Afvision():
             config=self.agents_config['diagram_info_extractor'], # type: ignore[index]
         )
 
+    @agent
+    def mermaid_code_generator(self) -> Agent:
+        return Agent(
+            config=self.agents_config['mermaid_code_generator'], # type: ignore[index]
+        )
+
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
@@ -36,6 +42,12 @@ class Afvision():
         return Task(
             config=self.tasks_config['extraction_task'], # type: ignore[index]
             tools=[ImageTool()],  # Registering the custom tool
+        )
+
+    @task
+    def code_generation_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['code_generation_task'], # type: ignore[index]
         )
 
     @crew

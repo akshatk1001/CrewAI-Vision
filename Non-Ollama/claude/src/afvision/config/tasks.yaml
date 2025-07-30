@@ -6,6 +6,25 @@ extraction_task:
     between items. The final output should be so detailed that the diagram can
     be recreated just based off your description. 
   expected_output: >
-    output what the image is describing in a txt file. 
+    A txt file containing a detailed description of the cloud architecture diagram.
   agent: diagram_info_extractor
   output_file: analyzed.txt
+
+
+code_generation_task:
+  description: >
+    You are a Mermaid code generator for complex cloud architecture diagrams.
+    Transform the exhaustive analysis into comprehensive Mermaid code that
+    recreates the original diagram as closely as possible - other than colors
+    and other visual styles that can not be represented in Mermaid. Feel free to
+    use subgraphs, multiple node types, and complex connections to accurately 
+    represent the cloud architecture from the analysis. Your goal is to create a
+    Mermaid diagram that is visually identical to the detailed analysis, even if
+    it does not make sense or is overly complex.
+  expected_output: >
+    A .mmd file containing a comprehensive Mermaid code block that accurately
+    represents the cloud architecture from the analysis. Must start with 
+    ```mermaid and end with ```. NO additional text.
+  depends_on: extraction_task
+  agent: mermaid_code_generator
+  output_file: diagram.mmd

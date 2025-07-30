@@ -1,50 +1,56 @@
-Azure Architecture Diagram
+AWS Diagram Example
 
-The diagram depicts an Azure cloud architecture with the following components and structure:
+This cloud architecture diagram illustrates an AWS (Amazon Web Services) setup. The diagram uses a color scheme of primarily orange, red, and blue on a white background. Here's a detailed description of all elements:
 
-1. Title:
-   "Azure Architecture Diagram" in a light gray box with diagonal striped background at the top.
+1. Title: "AWS Diagram Example" is prominently displayed at the top of the image.
 
-2. Main Components (left to right):
+2. External Components:
+   - Left side: An orange cross-shaped icon labeled "www.example.com"
+   - Right side: A red circular icon with a downward arrow, labeled "media.example.com"
 
-   a. Traffic Manager Profiles:
-      - Purple octagonal icon with arrows pointing in different directions
+3. Elastic Load Balancing:
+   - Represented by an orange circular icon with multiple arrows pointing inward and outward
+   - Located to the left of the main architecture
+   - Connected to www.example.com and the internal components
 
-   b. Application Load Balancers (ALB):
-      - Three green diamond-shaped icons with arrows pointing outwards
-      - Positioned between major tiers of the architecture
+4. Main Architecture:
+   - Enclosed in a large orange dashed rectangle labeled "Availability Zone" at the bottom
 
-   c. Web Tier:
-      - Box containing three identical VM (Virtual Machine) icons
-      - Each VM represented by a computer monitor with a blue cube inside
-      - Labeled "VM" underneath each icon
+5. Auto Scaling Group:
+   - Inside the Availability Zone, there's a pink dashed rectangle labeled "Auto Scaling Group"
+   - Contains a "Security Group" (orange rectangle) and two volumes
 
-   d. Business Tier:
-      - Similar to Web Tier, contains three VM icons labeled "VM"
+6. Security Group:
+   - Represented by an orange rectangle within the Auto Scaling Group
 
-   e. SQL Server Database On:
-      - Contains two SQL database icons
-      - Each database represented by a blue cylinder with "SQL" text and a small gear icon
+7. Volumes:
+   - Two red cylinder-shaped icons labeled "Root Volume" and "Data Volume"
+   - Located to the right of the Security Group within the Auto Scaling Group
 
-3. Connections:
-   - Gray arrows connect components from left to right
-   - Traffic Manager connects to the first ALB
-   - First ALB connects to all three VMs in Web Tier
-   - Web Tier connects to second ALB
-   - Second ALB connects to all three VMs in Business Tier
-   - Business Tier connects to third ALB
-   - Third ALB connects to both SQL databases
+8. Additional Security Group:
+   - Below the Auto Scaling Group, there's a blue cylinder icon with "M" inside
+   - Labeled "security group" (lowercase) and enclosed in a red dashed rectangle
 
-4. Management Subnet:
-   - Located at the bottom of the diagram
-   - Contains two icons:
-     a. Jumpbox: Computer monitor with a blue cube inside
-     b. Active Directory: Light blue icon with three connected dots
+9. Amazon EBS Snapshot:
+   - Represented by a small red icon shaped like a bucket
+   - Located to the right of the Availability Zone
+   - Connected to the Data Volume
+   - Labeled "Amazon EB S Snapshot" (with a space in "EBS")
 
-5. Visual Style:
-   - White background with minimalist design
-   - Components grouped in rectangular boxes with labels at the top
-   - Color scheme: Purple (Traffic Manager), Green (ALBs), Light Blue (VMs), Dark Blue (SQL databases)
-   - Management Subnet separated from main flow
+10. Amazon S3 Bucket:
+    - Large red bucket-shaped icon on the far right
+    - Labeled "Amazon S3 Bucket"
+    - Connected to the EBS Snapshot and receiving "Logs" directly from the Auto Scaling Group
 
-This diagram illustrates a multi-tiered Azure application architecture with load balancing, separated web and business logic tiers, a database backend, and management components for administration and security.
+11. CloudFront Distribution:
+    - Text running vertically along the right side of the diagram
+    - Connects media.example.com to the Amazon S3 Bucket
+    - Contains a dotted downward arrow symbol inside the icon
+
+12. Connections:
+    - Black arrows show the flow of data between components
+    - A "Logs" arrow directly connects the Auto Scaling Group to the S3 Bucket
+
+The diagram effectively illustrates the flow of data and the relationships between different AWS services and components in a cloud architecture setup. It shows how external requests from www.example.com are routed through Elastic Load Balancing to an Auto Scaling Group within an Availability Zone. The Auto Scaling Group contains a Security Group and manages Root and Data Volumes. The Data Volume is connected to an Amazon EBS Snapshot, which in turn connects to an Amazon S3 Bucket. The S3 Bucket also receives logs directly from the Auto Scaling Group. On the right side, media.example.com connects to the S3 Bucket via a CloudFront Distribution, likely for content delivery. An additional security group is depicted below the main Auto Scaling Group, possibly for extra security measures or management purposes.
+
+This detailed description captures all visible elements of the AWS Diagram Example, providing enough information to recreate the diagram accurately.
