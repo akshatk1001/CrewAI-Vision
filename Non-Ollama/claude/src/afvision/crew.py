@@ -4,7 +4,9 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
 import streamlit as st
 import json
-from langchain_core.agents import AgentFinish
+from crewai.tools.tool_types import ToolResult
+from crewai.agents.parser import AgentFinish
+from crewai.agents.parser import AgentAction
 from afvision.tools.custom_tool import ImageTool  # Assuming custom_tool.py is in the same directory
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -21,30 +23,41 @@ class Afvision():
 
     def step_callback_crewai(self, agent_output, agent_name, *args):
         with st.chat_message("AI"):
-            if isinstance(agent_output, str):
-                try:
-                    agent_output = json.loads(agent_output)
-                except json.JSONDecodeError:
-                    pass
-            
-            if isinstance(agent_output, list) and all(isinstance(item, tuple) for item in agent_output):
-                for action, desc in agent_output:
-                    st.write(f"Agent Name: {agent_name}")
-                    st.write(f"Tool used (if any): {getattr(action, 'tool', 'N/A')}")
-                    st.write(f"Tool input:  {getattr(action, 'tool_input', 'N/A')}")
-                    st.write(f"{getattr(action, 'log', 'Unknown')}")
-                    with st.expander("Show observation"):
-                        st.markdown(f"Observation\n\n{desc}")
-            
-            elif isinstance(agent_output, AgentFinish):
-                st.write(f"Agent Name: {agent_name}")
-                st.write(f"I've finished my task:\n {agent_output.return_values['output']}")
-            
-            else:
-                st.write(f"Agent Name: {agent_name}")
-                st.write(type(agent_output))
-                st.write(f"Output: {agent_output}")
+            st.markdown(f"## 🤖 {agent_name}")
 
+            if isinstance(agent_output, AgentAction):
+                st.markdown("### *Agent Action*")
+                st.markdown(f"#### Thought:\n\n{agent_output.thought}")
+                st.markdown(f"#### Tool (if any used):\n\n{agent_output.tool}")
+                st.markdown(f"#### Tool Input (if any used):\n\n{agent_output.tool_input}")
+                
+                # Truncate text at "Observation:" to avoid duplicating the result
+                text_content = agent_output.text
+                if "Observation:" in text_content:
+                    text_content = text_content.split("Observation:")[0].strip()
+                
+                if "Action:" in text_content:
+                    text_content = text_content.split("Action:")[0].strip()
+                
+                if "Thought:" in text_content:
+                    text_content = text_content.split("Thought:")[0].strip()
+
+                # if text_content is not just empty or whitespace then display it
+                if text_content:
+                    st.markdown(f"#### Text:\n\n{text_content}")
+
+                if hasattr(agent_output, 'result'):
+                    st.markdown(f"#### Result:\n\n{agent_output.result}")
+
+            elif isinstance(agent_output, AgentFinish):
+                st.markdown("### *Agent Finished*")
+                st.markdown(f"#### Thought:\n\n{agent_output.thought}")
+                st.markdown(f"#### Final Answer:\n\n{agent_output.output}")
+
+            else:
+                with st.expander("Other type of Agent Output"):
+                    st.write(f"Type: {type(agent_output)}")
+                    st.write(f"Agent Output: {agent_output}")
 
 
     # Learn more about YAML configuration files here:

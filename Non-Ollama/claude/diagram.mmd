@@ -1,33 +1,47 @@
 ```mermaid
-graph LR
+graph TD
     subgraph AZ["Availability Zone"]
+        ELB((Elastic Load Balancing))
         subgraph ASG["Auto Scaling Group"]
             SG["Security Group"]
-            RV[("Root Volume")]
-            DV[("Data Volume")]
+            RV["Root Volume"]
+            DV["Data Volume"]
         end
-        MSG[("security group")]
+        EBSS["Amazon EBS Snapshot"]
+        SG2["M"]
     end
     
     WWW["www.example.com"]
-    ELB((Elastic Load Balancing))
-    EBSS[(Amazon EB S Snapshot)]
-    S3[(Amazon S3 Bucket)]
-    CFD((Cloud Front Distribution))
     MEDIA["media.example.com"]
+    S3["Amazon S3 Bucket"]
     
     WWW --> ELB
-    ELB --> AZ
+    MEDIA --> ELB
+    ELB --> ASG
+    ASG -- Logs --> S3
     DV --> EBSS
     EBSS --> S3
-    AZ -- Logs --> S3
-    S3 --> MEDIA
-    CFD -.-> MEDIA
     
-    classDef default fill:#fff,stroke:#333,stroke-width:2px;
-    classDef az stroke-dasharray: 5 5;
-    classDef asg stroke-dasharray: 5 5;
+    classDef default fill:#fff,stroke:#000,stroke-width:2px;
+    classDef entry fill:#ffa500,stroke:#000,stroke-width:2px;
+    classDef media fill:#ff0000,stroke:#000,stroke-width:2px;
+    classDef elb fill:#ffa500,stroke:#000,stroke-width:2px;
+    classDef asg fill:#ffc0cb,stroke:#000,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef sg fill:#ffa500,stroke:#000,stroke-width:2px;
+    classDef volume fill:#ff0000,stroke:#000,stroke-width:2px;
+    classDef snapshot fill:#ff0000,stroke:#000,stroke-width:2px;
+    classDef bucket fill:#ff0000,stroke:#000,stroke-width:2px;
+    classDef sg2 fill:#0000ff,stroke:#000,stroke-width:2px;
     
-    class AZ az;
+    class WWW entry;
+    class MEDIA media;
+    class ELB elb;
     class ASG asg;
+    class SG sg;
+    class RV,DV volume;
+    class EBSS snapshot;
+    class S3 bucket;
+    class SG2 sg2;
+    
+    linkStyle default stroke:#000,stroke-width:2px;
 ```
