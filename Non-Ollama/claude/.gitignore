@@ -1,5 +1,5 @@
 .env
 __pycache__/
 .DS_Store
-Non-Ollama/claude/analyzed.txt
-Non-Ollama/claude/diagram.mmd
+analyzed.txt
+diagram.mmd
